@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
+from rest_framework import authentication
 
 from .models import Student, Course
 from .serializers import StudentSerializer, CourseSerializer
@@ -17,7 +18,8 @@ from .permissions import StudentPermission
 class StudentApiView(APIView):
     serializer = StudentSerializer
     queryset = Student.objects.all()
-    permission_classes = [StudentPermission]
+    permission_classes = [permissions.IsAuthenticated]
+    # authentication_classes = [authentication.TokenAuthentication]
 
     def check_obj(self, request, obj):
         try:
