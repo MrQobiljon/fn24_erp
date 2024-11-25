@@ -2,11 +2,11 @@ from rest_framework import serializers
 from .models import Student, Course
 
 
-class StudentSerializer(serializers.HyperlinkedModelSerializer):
+class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ['url', 'id', 'group_id', 'full_name', 'age', 'course']
-        depth = 1
+        fields = ['id', 'group', 'full_name', 'age', 'course']
+        # depth = 1
 
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):
