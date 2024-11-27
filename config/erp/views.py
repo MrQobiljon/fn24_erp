@@ -2,12 +2,13 @@ from django.shortcuts import render
 from django.forms import model_to_dict
 
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView
+from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework import authentication
+from rest_framework import filters
 
 from rest_framework import mixins
 
@@ -18,35 +19,92 @@ from .permissions import StudentPermission
 # Create your views here.
 
 
-class StudentApiView(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+class StudentApiView(generics.ListCreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    ordering_fields = ['full_name', 'address', 'age']
+    search_fields = ['full_name', 'address', 'age']
+
+
+
+class StudentDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
 
 
-class StudentDetailApiView(GenericAPIView,
-                           mixins.RetrieveModelMixin,
-                           mixins.UpdateModelMixin,
-                           mixins.DestroyModelMixin):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
-    lookup_url_kwarg = 'student_id'
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
+
+
+
+
+
+
+# class StudentApiView(generics.ListCreateAPIView):
+#     # queryset = Student.objects.all()
+#     # serializer_class = StudentSerializer
+#
+#     def get_queryset(self):
+#         q = self.request.query_params.get("q", False)
+#         if q:
+#             queryset = Student.objects.filter(full_name__icontains=q)
+#         else:
+#             queryset = Student.objects.all()
+#         return queryset
+#
+#     def get_serializer_class(self):
+#         return StudentSerializer
+#
+#
+# class StudentDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Student.objects.all()
+#     serializer_class = StudentSerializer
+#
+#     def get_object(self):
+#         return self.queryset.get(pk=self.kwargs.get("pk"))
+
+
+
+
+
+
+
+
+
+# class StudentApiView(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+#     queryset = Student.objects.all()
+#     serializer_class = StudentSerializer
+#
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+#
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+
+
+
+# class StudentDetailApiView(GenericAPIView,
+#                            mixins.RetrieveModelMixin,
+#                            mixins.UpdateModelMixin,
+#                            mixins.DestroyModelMixin):
+#     queryset = Student.objects.all()
+#     serializer_class = StudentSerializer
+#     lookup_url_kwarg = 'student_id'
+#
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
+#
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
+#
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
+#
 
 
 
