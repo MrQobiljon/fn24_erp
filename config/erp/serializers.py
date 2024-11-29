@@ -16,6 +16,12 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'id', 'name']
 
 
+class EmailSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length=150)
+    message = serializers.CharField()
+
+
+
 
 
 # class StudentSerializer(serializers.ModelSerializer):

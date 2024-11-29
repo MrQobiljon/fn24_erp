@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.forms import model_to_dict
+from django.core.mail import send_mail
 
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -9,28 +10,67 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework import filters
+from rest_framework.viewsets import ViewSet, ModelViewSet
 
 from rest_framework import mixins
+from rest_framework import throttling
 
 from .models import Student, Course
-from .serializers import StudentSerializer, CourseSerializer
+from .serializers import StudentSerializer, CourseSerializer, EmailSerializer
 from .permissions import StudentPermission
+from config.settings import EMAIL_HOST_USER
 
 # Create your views here.
 
+# class StudentThrottling(throttling.UserRateThrottle):
+#     scope = 'student'
 
-class StudentApiView(generics.ListCreateAPIView):
-    queryset = Student.objects.all()
+
+
+class StudentApiViewSet(ModelViewSet):
+    # queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
-    ordering_fields = ['full_name', 'address', 'age']
-    search_fields = ['full_name', 'address', 'age']
+    # throttle_classes = [StudentThrottling]
+    throttle_scope = 'student'
+
+    def get_queryset(self):
+        return Student.objects.all()
+
+
+class SendEmailAPIView(APIView):
+    def post(self, request):
+        serializer = EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        subject = serializer.validated_data.get("subject")
+        message = serializer.validated_data.get("message")
+
+        for i in ['madrahimovq@gmail.com', 'shunchakiabdujabbor@gmail.com',
+             'abdulvosid780@gmail.com',
+             'karimovnurmuham1201mad@gmail.com']:
+            send_mail(
+                subject,
+                message,
+                EMAIL_HOST_USER,
+                [i]
+            )
+
+        return Response("Yuborildi!!!")
 
 
 
-class StudentDetailApiView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Student.objects.all()
-    serializer_class = StudentSerializer
+
+# class StudentApiView(generics.ListCreateAPIView):
+#     queryset = Student.objects.all()
+#     serializer_class = StudentSerializer
+#     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+#     ordering_fields = ['full_name', 'address', 'age']
+#     search_fields = ['full_name', 'address', 'age']
+#
+#
+#
+# class StudentDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Student.objects.all()
+#     serializer_class = StudentSerializer
 
 
 

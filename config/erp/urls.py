@@ -1,9 +1,19 @@
-from django.urls import path
-from .views import StudentApiView, CourseAPIView, StudentDetailApiView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import StudentApiViewSet, CourseAPIView, SendEmailAPIView
+
+
+router = DefaultRouter()
+router.register('students', StudentApiViewSet, basename='student')
+print(router.urls)
+
 
 urlpatterns = [
-    path('students/', StudentApiView.as_view()),
-    path('students/<int:pk>/', StudentDetailApiView.as_view(), name='student-detail'),
     path('courses/', CourseAPIView.as_view()),
     path('courses/<int:pk>/', CourseAPIView.as_view(), name='course-detail'),
+
+    path('send-email/', SendEmailAPIView.as_view()),
+
+    path('', include(router.urls)),
 ]
+
