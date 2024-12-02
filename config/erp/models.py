@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import Group
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 
@@ -28,3 +29,8 @@ class Student(models.Model):
         return self.full_name
 
 
+class Video(models.Model):
+    name = models.CharField(max_length=150)
+    file = models.FileField(upload_to='videos/', validators=[
+        FileExtensionValidator(['mp4'])
+    ])

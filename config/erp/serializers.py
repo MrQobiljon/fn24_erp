@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Student, Course
+from .models import Student, Course, Video
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -8,6 +8,12 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         # fields = ['id', 'group', 'full_name', 'age', 'course', 'ad']
         # depth = 1
+
+
+class VideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Video
+        fields = '__all__'
 
 
 class CourseSerializer(serializers.HyperlinkedModelSerializer):

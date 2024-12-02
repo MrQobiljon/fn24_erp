@@ -11,12 +11,13 @@ from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework import filters
 from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.pagination import CursorPagination
 
 from rest_framework import mixins
 from rest_framework import throttling
 
-from .models import Student, Course
-from .serializers import StudentSerializer, CourseSerializer, EmailSerializer
+from .models import Student, Course, Video
+from .serializers import StudentSerializer, CourseSerializer, EmailSerializer, VideoSerializer
 from .permissions import StudentPermission
 from config.settings import EMAIL_HOST_USER
 
@@ -26,18 +27,36 @@ from config.settings import EMAIL_HOST_USER
 #     scope = 'student'
 
 
+class MyPagination(CursorPagination):
+    ordering = '-id'
+    page_size = 2
+
+
 
 class StudentApiViewSet(ModelViewSet):
     # queryset = Student.objects.all()
     serializer_class = StudentSerializer
     # throttle_classes = [StudentThrottling]
     throttle_scope = 'student'
+    pagination_class = MyPagination
 
     def get_queryset(self):
-        return Student.objects.all()
+        if self.request.version == 'v1':
+            print("v1 ishladi")
+            return Student.objects.all()
+        elif self.request.version == 'v2':
+            print("v2 ishladi")
+            return Student.objects.all().order_by('-pk')
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return StudentSerializer
+        elif self.request.version == 'v2':
+            return StudentSerializer
 
 
 class SendEmailAPIView(APIView):
+    '''bhihuihb gvuyb huiun nuniu'''
     def post(self, request):
         serializer = EmailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -55,6 +74,14 @@ class SendEmailAPIView(APIView):
             )
 
         return Response("Yuborildi!!!")
+
+
+class VideoApiViewSet(ModelViewSet):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+
+
+
 
 
 

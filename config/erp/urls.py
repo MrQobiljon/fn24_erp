@@ -1,11 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import StudentApiViewSet, CourseAPIView, SendEmailAPIView
+from .views import StudentApiViewSet, CourseAPIView, SendEmailAPIView, VideoApiViewSet
 
 
 router = DefaultRouter()
 router.register('students', StudentApiViewSet, basename='student')
-print(router.urls)
+router.register('videos', VideoApiViewSet, basename='videos')
 
 
 urlpatterns = [
